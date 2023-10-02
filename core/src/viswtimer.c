@@ -1,5 +1,91 @@
 #include "viswtimer_private.h"
 
-int VISWTIM_SomeFunc(void) { 
-  return 0;
+static struct {
+  Control_t tm[VISWTIM_MAX_TIMERS];
+  uint32_t lastInitialized;
+}timers;
+
+void VISWTIM_Init(void) {
+  timers.lastInitialized = 0;
+  for(uint32_t i = 0; i < VISWTIM_MAX_TIMERS; i++) {
+    Init(&timers.tm[i], NULL);
+  }
+}
+
+bool VISWTIM_Create(const char* name) {
+  if(Init(&timers.tm[timers.lastInitialized], name)) {
+    timers.lastInitialized++;
+    return true;
+  }
+  return false;
+}
+
+bool VISWTIM_Start(const char* name, uint32_t timeout) {
+  int32_t timerIndex = findTimerByName(name);
+  if(0 <= timerIndex)
+    return Start(&timers.tm[timerIndex], timeout);
+  return false;
+}
+
+bool VISWTIM_isExpired(const char* name){
+  int32_t timerIndex = findTimerByName(name);
+  if(0 <= timerIndex)
+    return isExpired(&timers.tm[timerIndex]);
+  return false;
+}
+
+void VISWTIM_Handler(void){
+  uint32_t index = 0;
+  while((index < VISWTIM_MAX_TIMERS) && (0 < strlen(timers.tm[index].name))) {
+    TickHandler(&timers.tm[index++]);
+  }
+}
+
+static bool Init(Control_t* timer, const char* name) {
+  if(NULL == timer)
+    return false;
+
+  if(name == NULL)
+    memset(timer->name, 0, VISWTIM_NAME_LEN);
+  else
+    strncpy(timer->name, name, VISWTIM_NAME_LEN);
+  timer->tick = 0;
+  timer->enabled = false;
+  timer->isExpired = false;
+  return true;
+}
+
+static bool Start(Control_t* timer, uint32_t timeout) {
+  if((NULL == timer) || (0 == timeout))
+    return false;
+  timer->tick = timeout;
+  timer->enabled = true;
+  timer->isExpired = false;
+  return true;
+}
+
+static bool isExpired(Control_t* timer) {
+  return timer->isExpired;
+}
+
+static void TickHandler(Control_t* timer) {
+  if(NULL == timer)
+    return;
+
+  if((timer->enabled) && (0 < timer->tick))
+    timer->tick -= 1;
+  else if ((timer->enabled) && (0 == timer->tick)) {
+    timer->enabled = false;
+    timer->isExpired = true;
+  }
+}
+
+static int32_t findTimerByName(const char* name) {
+  int32_t result = -1;
+  for(uint32_t i = 0; ((i < VISWTIM_MAX_TIMERS) && (i < timers.lastInitialized)); i++) {
+    if(0 == strncmp(timers.tm[i].name, name, VISWTIM_MAX_TIMERS)) {
+      result = i;
+    }
+  }
+  return result;
 }
