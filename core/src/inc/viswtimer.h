@@ -10,13 +10,13 @@ extern "C" {
 #include <stdbool.h>
 
 #define VISWTIM_NAME_LEN 15
-#define VISWTIM_MAX_TIMERS 100
+#if !defined(VISWTIM_MAX_TIMERS)
+  #define VISWTIM_MAX_TIMERS 20
+#endif
 
-typedef void (*VISWTIM_TickHandler_t)(void* context);
-
-void VISWTIM_Init(void);
+void VISWTIM_Init(uint32_t ticksInMs);
 bool VISWTIM_Create(const char* name);
-bool VISWTIM_Start(const char* name, uint32_t timeout);
+bool VISWTIM_Start(const char* name, uint32_t timeoutMs);
 bool VISWTIM_isExpired(const char* name);
 
 void VISWTIM_Handler(void);

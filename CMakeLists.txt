@@ -35,6 +35,7 @@ target_compile_definitions(tst_viswtimer PUBLIC
     WIN32
     _DEBUG
     CONSOLE
+    VISWTIM_MAX_TIMERS=3
 )
 
 # Compiler options
@@ -49,4 +50,6 @@ target_compile_options(tst_viswtimer PRIVATE
 target_link_libraries(
   tst_viswtimer viswtimer unity -g -coverage -lgcov)
 
-add_test(NAME VISWTIM_SomeFunc COMMAND tst_viswtimer "--gtest_filter=VISWTIM_SomeFunc.*")
+add_test(NAME VISWTIM_Create COMMAND tst_viswtimer "--gtest_filter=VISWTIM_Create.*")
+add_test(NAME VISWTIM_Start COMMAND tst_viswtimer "--gtest_filter=VISWTIM_Start.*")
+add_test(NAME VISWTIM_isExpired COMMAND tst_viswtimer "--gtest_filter=VISWTIM_isExpired.*")
