@@ -1,5 +1,31 @@
-#include "viswtimer_private.h"
+/**
+ * @file viswtimer.c
+ * @author Ilia Voronin (www.linkedin.com/in/ilia-voronin-7a169122a)
+ * @brief Source file of viswtimer (software timers) driver
+ * 
+ * @copyright Copyright (c) 2023Ilia Voronin
+ * 
+ * This software is licensed under GNU GENERAL PUBLIC LICENSE 
+ * The terms can be found in the LICENSE file in
+ * the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS,
+ * Without warranty of any kind, express or implied, 
+ * including but not limited to the warranties of merchantability, 
+ * fitness for a particular purpose and noninfringement. 
+ * In no event shall the authors or copyright holders be liable for any claim, 
+ * damages or other liability, whether in an action of contract, tort or otherwise, 
+ * arising from, out of or in connection with the software 
+ * or the use or other dealings in the software.
+ * 
+ */
 
+#include "viswtimer_private.h"
+#include "string.h"
+
+/**
+ * @brief array of all software timers
+ * 
+ */
 static struct {
   Control_t tm[VISWTIM_MAX_TIMERS];
   uint32_t initializedNumber;
@@ -63,10 +89,10 @@ static bool Init(Control_t* timer, const char* name) {
   return true;
 }
 
-static bool Start(Control_t* timer, uint32_t timeout) {
-  if((NULL == timer) || (0 == timeout))
+static bool Start(Control_t* timer, uint32_t timeoutMs) {
+  if((NULL == timer) || (0 == timeoutMs))
     return false;
-  timer->tick = timeout;
+  timer->tick = timeoutMs;
   timer->enabled = true;
   timer->isExpired = false;
   return true;
