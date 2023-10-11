@@ -1,7 +1,33 @@
-#include "viswtimer_private.h"
+/**
+ * @file viswtimer.c
+ * @author Ilia Voronin (www.linkedin.com/in/ilia-voronin-7a169122a)
+ * @brief Source file of viswtimer (software timers) driver
+ * 
+ * @copyright Copyright (c) 2023Ilia Voronin
+ * 
+ * This software is licensed under GNU GENERAL PUBLIC LICENSE 
+ * The terms can be found in the LICENSE file in
+ * the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS,
+ * Without warranty of any kind, express or implied, 
+ * including but not limited to the warranties of merchantability, 
+ * fitness for a particular purpose and noninfringement. 
+ * In no event shall the authors or copyright holders be liable for any claim, 
+ * damages or other liability, whether in an action of contract, tort or otherwise, 
+ * arising from, out of or in connection with the software 
+ * or the use or other dealings in the software.
+ * 
+ */
 
+#include "viswtimer_private.h"
+#include "string.h"
+
+/**
+ * @brief array of all software timers
+ * 
+ */
 static struct {
-  Control_t tm[VISWTIM_MAX_TIMERS];
+  Timer_t tm[VISWTIM_MAX_TIMERS];
   uint32_t initializedNumber;
   uint32_t ticksInMs;
 }timers;
@@ -19,7 +45,7 @@ bool VISWTIM_Create(const char* name) {
     return false;
   if(VISWTIM_MAX_TIMERS <= timers.initializedNumber)
     return false;
-  int32_t timerIndex = findTimerByName(name);
+  int32_t timerIndex = FindTimerByName(name);
   if(0 <= timerIndex)
     return false;
   if(Init(&timers.tm[timers.initializedNumber], name)) {
@@ -30,16 +56,16 @@ bool VISWTIM_Create(const char* name) {
 }
 
 bool VISWTIM_Start(const char* name, uint32_t timeoutMs) {
-  int32_t timerIndex = findTimerByName(name);
+  int32_t timerIndex = FindTimerByName(name);
   if(0 <= timerIndex)
     return Start(&timers.tm[timerIndex], timeoutMs * timers.ticksInMs);
   return false;
 }
 
-bool VISWTIM_isExpired(const char* name){
-  int32_t timerIndex = findTimerByName(name);
+bool VISWTIM_IsExpired(const char* name){
+  int32_t timerIndex = FindTimerByName(name);
   if(0 <= timerIndex)
-    return isExpired(&timers.tm[timerIndex]);
+    return IsExpired(&timers.tm[timerIndex]);
   return false;
 }
 
@@ -50,7 +76,7 @@ void VISWTIM_Handler(void){
   }
 }
 
-static bool Init(Control_t* timer, const char* name) {
+static bool Init(Timer_t* timer, const char* name) {
   if(NULL == timer)
     return false;
   if(name == NULL)
@@ -63,22 +89,22 @@ static bool Init(Control_t* timer, const char* name) {
   return true;
 }
 
-static bool Start(Control_t* timer, uint32_t timeout) {
-  if((NULL == timer) || (0 == timeout))
+static bool Start(Timer_t* timer, uint32_t timeoutMs) {
+  if((NULL == timer) || (0 == timeoutMs))
     return false;
-  timer->tick = timeout;
+  timer->tick = timeoutMs;
   timer->enabled = true;
   timer->isExpired = false;
   return true;
 }
 
-static bool isExpired(Control_t* timer) {
+static bool IsExpired(Timer_t* timer) {
   if(NULL == timer) 
     return false;
   return timer->isExpired;
 }
 
-static void TickHandler(Control_t* timer) {
+static void TickHandler(Timer_t* timer) {
   if(NULL == timer)
     return;
 
@@ -90,7 +116,7 @@ static void TickHandler(Control_t* timer) {
   }
 }
 
-static int32_t findTimerByName(const char* name) {
+static int32_t FindTimerByName(const char* name) {
   int32_t result = -1;
   if(NULL == name)
     return result;
