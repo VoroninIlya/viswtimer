@@ -43,6 +43,7 @@ typedef struct {
  * @return true if initialization is successful
  * @return false if initialization is failed
  */
+
 static bool Init(Timer_t* timer, const char* name);
 
 /**

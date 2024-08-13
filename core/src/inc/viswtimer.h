@@ -84,6 +84,7 @@ bool VISWTIM_Start(const char* name, uint32_t timeoutMs);
 bool VISWTIM_IsExpired(const char* name);
 
 /**
+
  * @brief Driver runtime, should be placed in systick handler
  */
 void VISWTIM_Handler(void);
