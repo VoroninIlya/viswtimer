@@ -27,9 +27,9 @@
  * 
  */
 static struct {
-  Timer_t tm[VISWTIM_MAX_TIMERS];
-  uint32_t initializedNumber;
-  uint32_t ticksInMs;
+  Timer_t tm[VISWTIM_MAX_TIMERS]; /*!< array of all timers*/
+  uint32_t initializedNumber;     /*!< number of initialized timer in array*/
+  uint32_t ticksInMs;             /*!< number of system ticks in a millisecond*/
 }timers;
 
 void VISWTIM_Init(uint32_t ticksInMs) {
