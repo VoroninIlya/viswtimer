@@ -25,7 +25,7 @@
 #include "viswtimer.h"
 
 /**
- * @brief Driver control type
+ * @brief Timer control type
  * 
  */
 typedef struct {
@@ -33,7 +33,7 @@ typedef struct {
   uint32_t tick;               /*!< timer tick counter */
   bool enabled;                /*!< enabled flag */
   bool isExpired;              /*!< expiered flag */
-}Control_t;
+}Timer_t;
 
 /**
  * @brief Initialize a timer control structure
@@ -43,7 +43,7 @@ typedef struct {
  * @return true if initialization is successful
  * @return false if initialization is failed
  */
-static bool Init(Control_t* timer, const char* name);
+static bool Init(Timer_t* timer, const char* name);
 
 /**
  * @brief Start timer
@@ -53,7 +53,7 @@ static bool Init(Control_t* timer, const char* name);
  * @return true if start is successful
  * @return false if any error occurred by start
  */
-static bool Start(Control_t* timer, uint32_t timeoutMs);
+static bool Start(Timer_t* timer, uint32_t timeoutMs);
 
 /**
  * @brief Check if timer is expiered
@@ -62,14 +62,14 @@ static bool Start(Control_t* timer, uint32_t timeoutMs);
  * @return true if timer has expired
  * @return false if timer hasn't expired
  */
-static bool isExpired(Control_t* timer);
+static bool IsExpired(Timer_t* timer);
 
 /**
  * @brief Timer tick handler
  * 
  * @param timer Timer control structure instance
  */
-static void TickHandler(Control_t* timer);
+static void TickHandler(Timer_t* timer);
 
 /**
  * @brief Find timer by name in array of timers
@@ -77,7 +77,7 @@ static void TickHandler(Control_t* timer);
  * @param name Timer name to search
  * @return int32_t index of found timer, if no timer found returns -1
  */
-static int32_t findTimerByName(const char* name);
+static int32_t FindTimerByName(const char* name);
 
 #endif // VISWTIMER_PRIVATE_H
 

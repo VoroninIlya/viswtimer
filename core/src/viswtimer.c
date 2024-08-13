@@ -27,7 +27,7 @@
  * 
  */
 static struct {
-  Control_t tm[VISWTIM_MAX_TIMERS];
+  Timer_t tm[VISWTIM_MAX_TIMERS];
   uint32_t initializedNumber;
   uint32_t ticksInMs;
 }timers;
@@ -45,7 +45,7 @@ bool VISWTIM_Create(const char* name) {
     return false;
   if(VISWTIM_MAX_TIMERS <= timers.initializedNumber)
     return false;
-  int32_t timerIndex = findTimerByName(name);
+  int32_t timerIndex = FindTimerByName(name);
   if(0 <= timerIndex)
     return false;
   if(Init(&timers.tm[timers.initializedNumber], name)) {
@@ -56,16 +56,16 @@ bool VISWTIM_Create(const char* name) {
 }
 
 bool VISWTIM_Start(const char* name, uint32_t timeoutMs) {
-  int32_t timerIndex = findTimerByName(name);
+  int32_t timerIndex = FindTimerByName(name);
   if(0 <= timerIndex)
     return Start(&timers.tm[timerIndex], timeoutMs * timers.ticksInMs);
   return false;
 }
 
-bool VISWTIM_isExpired(const char* name){
-  int32_t timerIndex = findTimerByName(name);
+bool VISWTIM_IsExpired(const char* name){
+  int32_t timerIndex = FindTimerByName(name);
   if(0 <= timerIndex)
-    return isExpired(&timers.tm[timerIndex]);
+    return IsExpired(&timers.tm[timerIndex]);
   return false;
 }
 
@@ -76,7 +76,7 @@ void VISWTIM_Handler(void){
   }
 }
 
-static bool Init(Control_t* timer, const char* name) {
+static bool Init(Timer_t* timer, const char* name) {
   if(NULL == timer)
     return false;
   if(name == NULL)
@@ -89,7 +89,7 @@ static bool Init(Control_t* timer, const char* name) {
   return true;
 }
 
-static bool Start(Control_t* timer, uint32_t timeoutMs) {
+static bool Start(Timer_t* timer, uint32_t timeoutMs) {
   if((NULL == timer) || (0 == timeoutMs))
     return false;
   timer->tick = timeoutMs;
@@ -98,13 +98,13 @@ static bool Start(Control_t* timer, uint32_t timeoutMs) {
   return true;
 }
 
-static bool isExpired(Control_t* timer) {
+static bool IsExpired(Timer_t* timer) {
   if(NULL == timer) 
     return false;
   return timer->isExpired;
 }
 
-static void TickHandler(Control_t* timer) {
+static void TickHandler(Timer_t* timer) {
   if(NULL == timer)
     return;
 
@@ -116,7 +116,7 @@ static void TickHandler(Control_t* timer) {
   }
 }
 
-static int32_t findTimerByName(const char* name) {
+static int32_t FindTimerByName(const char* name) {
   int32_t result = -1;
   if(NULL == name)
     return result;
