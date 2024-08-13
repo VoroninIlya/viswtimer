@@ -81,7 +81,7 @@ bool VISWTIM_Start(const char* name, uint32_t timeoutMs);
  * @return true if timer has expiered
  * @return false if timer hasn't expiered
  */
-bool VISWTIM_isExpired(const char* name);
+bool VISWTIM_IsExpired(const char* name);
 
 /**
  * @brief Driver runtime, should be placed in systick handler
