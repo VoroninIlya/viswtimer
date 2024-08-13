@@ -46,7 +46,7 @@ TEST(TST_VISWTIMER, VISWTIM_Create)
 TEST(TST_VISWTIMER, VISWTIM_Start)
 {
   TEST_ASSERT_TRUE(VISWTIM_Create("test1"));
-  // start name == NULLq
+  // start name == NULL
   {
     TEST_ASSERT_FALSE(VISWTIM_Start(NULL, 10));
   }
